@@ -1,24 +1,25 @@
-require("dotenv").config();
 const express = require("express");
 const app = express();
-const PORT = process.env.port || 2027;
-const path = require("path");
-const cors = require("cors");
-const mongoose = require("mongoose");
+const PORT = process.env.PORT || 2024;
 
-mongoose
-  .connect("mongodb://localhost:27017")
-  .then(() => {
-    console.log("db connected successfully !");
-  })
-  .catch((err) => {
-    console.log(err.message, "db connection error");
-  });
+const cors = require("cors");
+
+const mongoose = require("mongoose");
+const DB_URL = "mongodb://localhost:27017/Ecommerce";
+mongoose.connect(DB_URL, { autoIndex: true });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+const ProductRoutes = require("./Routes/ProductRoutes");
+
+app.use("/products", ProductRoutes);
+
+app.get(["/", "/*"], (req, res, next) => {
+  res.send({ message: "not found" });
+});
+
 app.listen(PORT, () => {
-  console.log("server up and running on port", PORT);
+  console.log("http://localhost:" + PORT);
 });
