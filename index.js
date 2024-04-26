@@ -24,7 +24,7 @@ app.use("/user", UserRoutes);
 
 
 app.get(["/", "/*"], (req, res, next) => {
-  res.send({ message: "not found" });
+  res.json({ message: "hello from volt nation , your requested page is not found" });
 });
 
 app.listen(PORT, () => {
