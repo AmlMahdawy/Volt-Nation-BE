@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 2024;
@@ -5,8 +6,8 @@ const PORT = process.env.PORT || 2024;
 const cors = require("cors");
 
 const mongoose = require("mongoose");
-const DB_URL = "mongodb://localhost:27017/VoltNation";
-mongoose.connect(DB_URL, { autoIndex: true });
+
+mongoose.connect(process.env.DB_URL, { autoIndex: true });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
