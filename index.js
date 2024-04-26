@@ -7,7 +7,7 @@ const cors = require("cors");
 
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://voltnation44:vsWEkhYERv1YUQOZ@cluster0.zjd0x0l.mongodb.net/", { autoIndex: true });
+mongoose.connect("mongodb+srv://voltnation44:IhD9lsUXr91Cg0qq@cluster0.fauifky.mongodb.net/", { autoIndex: true });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
