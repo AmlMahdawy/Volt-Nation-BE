@@ -6,8 +6,8 @@ const PORT = process.env.PORT || 2024;
 const cors = require("cors");
 
 const mongoose = require("mongoose");
-console.log(process.env.DB_URL, "db env")
-mongoose.connect(process.env.DB_URL, { autoIndex: true });
+
+mongoose.connect("mongodb+srv://voltnation44:vsWEkhYERv1YUQOZ@cluster0.zjd0x0l.mongodb.net/", { autoIndex: true });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
