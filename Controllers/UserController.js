@@ -1,6 +1,18 @@
 const UserModel = require("../Models/UserModel")
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer")
+
+//nodemailer transporter configerations 
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: "voltnation44@gmail.com",
+        pass: "azqo zhvi tgjc luqe"
+    }
+})
 
 //helper functions 
 async function duplicateUserCheck(email) {
@@ -68,13 +80,44 @@ let Login = async (req, res) => {
 
 }
 
+let ResetPasswordMail = async (req, res) => {
+    let data = req.body
+    let foundUser = await duplicateUserCheck(data.email);
+    if (!foundUser) return res.status(403).send({ message: "Invalid E-mail" })
 
+    transporter.sendMail({
+        to: `${data.email}`,
+        subject: "Password Resetting Request",
+        html: `<div> 
+        Hello ${foundUser.name},
+        <br>
+        <br>
+        Forgot your password ?
+        <br>
+        We recieved a request to reset the password for your account.<br>
+        To reset your password use the following <emp>OTP</emp>:
+        <h1>${data.otp}<h1>  
+        </div>`
+    }).then(() => {
+        res.status(200).json({ message: "reset mail sent successfully" })
+    }).catch((err) => { console.log(err.message) })
+
+}
+let updateUserPassword = async (req, res) => {
+    let data = req.body
+    var salt = await bcrypt.genSalt(10);
+    var hashedPassword = await bcrypt.hash(data.password, salt);
+    await UserModel.findOneAndUpdate({ email: data.email }, { password: hashedPassword })
+    res.status(200).json({ message: "password updated" })
+}
 
 module.exports = {
     Register,
     Login,
     GetUserById,
-    DecodeToken
+    DecodeToken,
+    ResetPasswordMail,
+    updateUserPassword
 };
 
 
