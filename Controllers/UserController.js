@@ -34,7 +34,7 @@ let GetUserById = async (_id) => {
 ////////////////////////
 
 let Register = async (req, res, next) => {
-
+    let user = {}
     var Data = req.body;
     let foundUser = await duplicateUserCheck(Data.email);
     if (foundUser) return res.status(401).send({ message: "email already registered" });
@@ -42,11 +42,11 @@ let Register = async (req, res, next) => {
     var salt = await bcrypt.genSalt(10);
     var hashedPassword = await bcrypt.hash(Data.password, salt);
 
-    Data.email = Data.email.toLowerCase();
-    Data.password = hashedPassword;
-    Data.isAdmin = 'user'
-
-    var newUser = new UserModel(Data);
+    user.email = Data.email.toLowerCase();
+    user.password = hashedPassword;
+    user.isAdmin = 'user'
+    user.name = Data.firstName + Data.lastName;
+    var newUser = new UserModel(user);
     await newUser.save()
         .then()
         .catch((err) => { res.json({ message: err }) });
