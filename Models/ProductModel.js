@@ -6,10 +6,12 @@ const ProductSchema = new mongoose.Schema({
   features: { type: Array },
   price: { type: String },
   colors: { type: Array },
-  rating: { type: Number },
+  reviews: [],
   releasedDate: { type: String },
   factoryName: { type: String },
   images: { type: Array },
+  salesNum: { type: Number },
+  quantity: { type: Number },
   id: { type: String },
 });
 
