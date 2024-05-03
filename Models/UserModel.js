@@ -8,14 +8,17 @@ const UsersSchema = new mongoose.Schema({
         required: true,
     },
     password: { type: String, minLength: 5, required: true },
-    purchased: [],
+    phone: { type: String },
     favourite: [],
+    recentlyViewed: [],
+    purchased: [],
+    addresses: [],
     isAdmin: {
         type: String,
         enum: ['admin', 'user'],
         required: true,
-    },
-    image: {}
+    }
+
 
 })
 module.exports = mongoose.model("Users", UsersSchema);

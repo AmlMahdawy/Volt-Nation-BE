@@ -1,7 +1,13 @@
 const UserModel = require("../Models/UserModel")
+const CartModel = require("../Models/CartModel")
+
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer")
+const { v4: uuidv4 } = require('uuid');
+
+
+
 
 //nodemailer transporter configerations 
 const transporter = nodemailer.createTransport({
@@ -27,8 +33,8 @@ let DecodeToken = async (req, res) => {
     }
     return false;
 }
-let GetUserById = async (_id) => {
-    return await UserModel.findOne({ id: _id })
+let GetUserById = async (id) => {
+    return await UserModel.findOne({ _id: id })
 };
 
 ////////////////////////
@@ -37,24 +43,28 @@ let Register = async (req, res, next) => {
     let user = {}
     var Data = req.body;
     let foundUser = await duplicateUserCheck(Data.email);
-    if (foundUser) return res.status(401).send({ message: "email already registered" });
+    if (foundUser) return res.status(401).send({ res: false, message: "email already registered" });
 
     var salt = await bcrypt.genSalt(10);
     var hashedPassword = await bcrypt.hash(Data.password, salt);
 
-    user.email = Data.email.toLowerCase();
-    user.password = hashedPassword;
-    user.isAdmin = 'user'
-    user.name = Data.firstName + Data.lastName;
-    var newUser = new UserModel(user);
+    Data.email = Data.email.toLowerCase();
+    Data.password = hashedPassword;
+    Data.isAdmin = 'user'
+    Data.name = Data.firstName + Data.lastName;
+    var newUser = new UserModel(Data);
+    let userCart = new CartModel({ userID: newUser._id, totalPrice: 0 })
+    await userCart.save()
+
     await newUser.save()
         .then()
         .catch((err) => { res.json({ message: err }) });
-    res.status(201).send({ message: true });
+    res.status(201).send({ res: true });
 };
 
 
 let Login = async (req, res) => {
+    console.log(req.body)
     var body = req.body;
     if (!body.gmail) {
         body.email = body.email.toLowerCase();
@@ -111,6 +121,7 @@ let updateUserPassword = async (req, res) => {
     res.status(200).json({ message: "password updated" })
 }
 
+
 module.exports = {
     Register,
     Login,
@@ -118,6 +129,8 @@ module.exports = {
     DecodeToken,
     ResetPasswordMail,
     updateUserPassword
+
+
 };
 
 
