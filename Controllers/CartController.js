@@ -94,16 +94,16 @@ const CheckOut = async (req, res) => {
 
     for (let i = 0; i < cart.products.length; i++) {
         //add to purchased 
+        let productId = cart.products[i].product._id
 
         let foundPurchase = user.purchased.find((obj) => {
-            return obj.product._id == cart.products[i].product._id
+            return obj.product.name == cart.products[i].product.name
         })
         if (!foundPurchase) {
             cart.products[i].review = false
             user.purchased.push(cart.products[i])
         }
         //decrement available book quantity
-        let productId = cart.products[i].product._id
         let product = await ProductModel.findOne({ _id: productId })
         product.quantity = product.quantity - cart.products[i].quantity
         product.markModified('quantity')
