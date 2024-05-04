@@ -5,6 +5,7 @@ let GetAllProducts = async (req, res, next) => {
   res.status(200).send(Products);
 };
 
+
 module.exports = {
-  GetAllProducts,
+  GetAllProducts
 };

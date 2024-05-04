@@ -106,7 +106,7 @@ const CheckOut = async (req, res) => {
         //decrement available book quantity
         let product = await ProductModel.findOne({ _id: productId })
         product.quantity = product.quantity - cart.products[i].quantity
-        product.salesNum = product.salesNum + cart.products[i].quantity
+        // product.salesNum = (+product.salesNum) + (+cart.products[i].quantity)
         product.markModified('quantity')
         product.markModified('salesNum')
 
