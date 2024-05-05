@@ -25,13 +25,17 @@ async function duplicateUserCheck(email) {
     return await UserModel.findOne({ email: email }).exec();
 }
 let DecodeToken = async (req, res) => {
-
-    let token = req.header("Authorization")
-    if (token) {
-        let userID = jwt.verify(token, "volt").id
-        return userID
+    try {
+        let token = req.header("Authorization")
+        if (token) {
+            let userID = jwt.verify(token, "volt").id
+            return userID
+        }
+        return false;
     }
-    return false;
+    catch (error) {
+        res.send({ "Error while verifying token:": error });
+    }
 }
 let GetUserById = async (id) => {
     return await UserModel.findOne({ _id: id })
@@ -50,8 +54,8 @@ let Register = async (req, res, next) => {
 
     Data.email = Data.email.toLowerCase();
     Data.password = hashedPassword;
-    Data.isAdmin = 'user'
-    Data.name = Data.firstName + Data.lastName;
+    Data.name = Data.firstName + " " + Data.lastName;
+
     var newUser = new UserModel(Data);
     let userCart = new CartModel({ userID: newUser._id, totalPrice: 0 })
     await userCart.save()

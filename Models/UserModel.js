@@ -13,10 +13,11 @@ const UsersSchema = new mongoose.Schema({
     recentlyViewed: [],
     purchased: [],
     addresses: [],
-    isAdmin: {
+    role: {
         type: String,
-        enum: ['admin', 'user'],
+        enum: ['admin', 'user', 'master'],
         required: true,
+        default: "user"
     }
 
 
