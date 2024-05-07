@@ -15,42 +15,73 @@ const GetCart = async (req, res) => {
     }
 
 }
+// const AddToCart = async (req, res) => {
+//     let { productId } = req.params;
+//     let userId = await UserController.DecodeToken(req, res)
+//     if (userId) {
+//         let cart = await CartModel.findOne({ userID: userId })
+//         let product = await ProductModel.findOne({ _id: productId })
+
+//         let foundProduct = cart.products.find((obj) => {
+//             return obj.product._id == productId
+//         })
+//         if (foundProduct) {
+
+//             for (let i = 0; i < cart.products.length; i++) {
+//                 if (cart.products[i].product._id == productId) {
+//                     cart.products[i].quantity = cart.products[i].quantity + 1;
+//                     cart.totalPrice = cart.totalPrice + (+product.price)
+//                     cart.markModified('products');
+//                 }
+//             }
+//             await cart.save();
+
+//             res.send(cart);
+
+//         } else {
+//             cart.products.push({ product, quantity: 1 })
+//             cart.totalPrice = (cart.totalPrice + (+product.price))
+//             await cart.save()
+
+
+//             res.send(cart)
+
+//         }
+//     }
+
+
+// }
 const AddToCart = async (req, res) => {
-    let { productId } = req.params;
-    let userId = await UserController.DecodeToken(req, res)
-    if (userId) {
-        let cart = await CartModel.findOne({ userID: userId })
-        let product = await ProductModel.findOne({ _id: productId })
+    try {
+        let { productId } = req.params;
+        let userId = await UserController.DecodeToken(req, res);
 
-        let foundProduct = cart.products.find((obj) => {
-            return obj.product._id == productId
-        })
-        if (foundProduct) {
-
-            for (let i = 0; i < cart.products.length; i++) {
-                if (cart.products[i].product._id == productId) {
-                    cart.products[i].quantity = cart.products[i].quantity + 1;
-                    cart.totalPrice = cart.totalPrice + (+product.price)
-                    cart.markModified('products');
-                }
-            }
-            await cart.save();
-
-            res.send(cart);
-
-        } else {
-            cart.products.push({ product, quantity: 1 })
-            cart.totalPrice = (cart.totalPrice + (+product.price))
-            await cart.save()
-
-
-            res.send(cart)
-
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
         }
+
+        // Find the cart and update it atomically
+        let updatedCart = await CartModel.findOneAndUpdate(
+            { userID: userId },
+            {
+                $addToSet: {
+                    products: { product: productId, quantity: 1 }
+                },
+                $inc: { totalPrice: +product.price }
+            },
+            {
+                new: true, // Return the updated cart
+                upsert: true // Create a new cart if it doesn't exist
+            }
+        );
+
+        res.status(200).json(updatedCart);
+    } catch (error) {
+        console.error("Error adding product to cart:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
+};
 
-
-}
 const Decrement = async (req, res) => {
     let { productId } = req.params
     let userId = await UserController.DecodeToken(req, res)

@@ -21,6 +21,17 @@ router.get("/address/all", ProfileController.GetAllAdrresses);
 router.post("/address/edit", ProfileController.EditAddress);
 router.delete("/address/delete/:id", ProfileController.DeleteAddress);
 
+//orders
+router.get("/orders", ProfileController.getUserOrders);
+router.patch("/order/cancel/:orderId", ProfileController.CancelOrder)
+
+//favourite
+router.post("/new-favourite/:productId", ProfileController.AddToWishlist);
+router.patch("/remove-favourite/:productId", ProfileController.RemoveFromWishlist);
+
+//recentlyViewed
+router.post("/viewed/:productId", ProfileController.AddToviewed);
+
 
 
 

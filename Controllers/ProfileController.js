@@ -1,5 +1,8 @@
 const UserModel = require("../Models/UserModel")
-const UserController = require("../Controllers/UserController");
+const OrderModel = require("../Models/OrderModel")
+const ProductModel = require("../Models/ProductModel")
+const UserController = require("../Controllers/UserController")
+
 const { v4: uuidv4 } = require('uuid');
 
 //profile functions
@@ -112,12 +115,78 @@ const DeleteAddress = async (req, res) => {
 
 }
 
+//ORDERS
+const getUserOrders = async (req, res) => {
+    let userId = await UserController.DecodeToken(req, res);
+    if (userId) {
+        let orders = await OrderModel.find({ userID: userId })
+        res.send(orders)
+    }
 
+}
+const CancelOrder = async (req, res) => {
+    let userId = await UserController.DecodeToken(req, res);
+    if (userId) {
+        let orders = await OrderModel.findOneAndUpdate({ _id: req.params.orderId }, { status: "cancelled" })
+        res.status(200).send()
+    }
+}
+
+//WISHLIST
+const AddToWishlist = async (req, res) => {
+    let product = await ProductModel.findOne({ _id: req.params.productId })
+    let userId = await UserController.DecodeToken(req, res);
+    if (userId) {
+        let user = await UserController.GetUserById(userId);
+        user.favourite.push(product)
+        await user.save()
+        res.send(user.favourite)
+    }
+
+}
+const RemoveFromWishlist = async (req, res) => {
+    let userId = await UserController.DecodeToken(req, res);
+    if (userId) {
+        let user = await UserController.GetUserById(userId);
+        user.favourite.find((product, index) => {
+            if (product._id == req.params.productId) {
+                user.favourite.splice(index, 1)
+            }
+        })
+        await user.save()
+        res.send(user.favourite)
+    }
+}
+//RecentlyViewed
+const AddToviewed = async (req, res) => {
+    let product = await ProductModel.findOne({ _id: req.params.productId })
+    let userId = await UserController.DecodeToken(req, res);
+    if (userId) {
+        let user = await UserController.GetUserById(userId);
+        if (user.recentlyViewed.length == 5) {
+            user.recentlyViewed.shift()
+            user.recentlyViewed.push(product)
+
+        } else {
+            user.recentlyViewed.push(product)
+
+        }
+
+        await user.save()
+        res.send(user.recentlyViewed)
+    }
+
+}
 module.exports = {
     GetUserData,
     UpdateUserData,
     CreateAddress,
     GetAllAdrresses,
     EditAddress,
-    DeleteAddress
+    DeleteAddress,
+    getUserOrders,
+    AddToWishlist,
+    RemoveFromWishlist,
+    CancelOrder,
+    AddToviewed
 }

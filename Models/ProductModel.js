@@ -12,6 +12,7 @@ const ProductSchema = new mongoose.Schema({
   images: { type: Array },
   salesNum: { type: Number },
   quantity: { type: Number },
+  date: { type: String },
   id: { type: String },
 });
 
