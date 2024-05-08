@@ -58,9 +58,8 @@ const Decrement = async (req, res) => {
     let userId = await UserController.DecodeToken(req, res)
     if (userId) {
         let cart = await CartModel.findOne({ userID: userId })
-
         for (let i = 0; i < cart.products.length; i++) {
-            if (cart.products[i].product._id == productId) {
+            if (cart.products[i].product._id == productId && cart.products[i].quantity >= quantity) {
                 cart.products[i].quantity = cart.products[i].quantity - (+quantity);
                 cart.totalPrice = cart.totalPrice - (+cart.products[i].product.price * (+quantity))
                 if (cart.products[i].quantity == 0) {
