@@ -16,10 +16,14 @@ app.use(cors());
 const ProductRoutes = require("./Routes/ProductRoutes");
 const UserRoutes = require("./Routes/UserRoutes");
 const CartRoutes = require("./Routes/CartRoutes");
+const DashboardRoutes = require("./Routes/DashboardRoutes");
+
 
 app.use("/products", ProductRoutes);
 app.use("/user", UserRoutes);
 app.use("/cart", CartRoutes);
+app.use("/dashboard", DashboardRoutes);
+
 
 
 

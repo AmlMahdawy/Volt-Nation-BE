@@ -16,7 +16,7 @@ const GetCart = async (req, res) => {
 
 }
 const AddToCart = async (req, res) => {
-    let { productId, quantity } = req.params;
+    let { productId } = req.params;
     let userId = await UserController.DecodeToken(req, res)
     if (userId) {
         let cart = await CartModel.findOne({ userID: userId })
@@ -29,8 +29,8 @@ const AddToCart = async (req, res) => {
 
             for (let i = 0; i < cart.products.length; i++) {
                 if (cart.products[i].product._id == productId) {
-                    cart.products[i].quantity = cart.products[i].quantity + (+quantity);
-                    cart.totalPrice = cart.totalPrice + (+product.price * +quantity)
+                    cart.products[i].quantity = cart.products[i].quantity + 1;
+                    cart.totalPrice = cart.totalPrice + (+product.price)
                     cart.markModified('products');
                 }
             }
@@ -39,8 +39,8 @@ const AddToCart = async (req, res) => {
             res.send(cart);
 
         } else {
-            cart.products.push({ product, quantity: quantity })
-            cart.totalPrice = (cart.totalPrice + (+product.price * +quantity))
+            cart.products.push({ product, quantity: 1 })
+            cart.totalPrice = (cart.totalPrice + (+product.price))
             await cart.save()
 
 
@@ -54,14 +54,14 @@ const AddToCart = async (req, res) => {
 
 
 const Decrement = async (req, res) => {
-    let { productId, quantity } = req.params
+    let { productId } = req.params
     let userId = await UserController.DecodeToken(req, res)
     if (userId) {
         let cart = await CartModel.findOne({ userID: userId })
         for (let i = 0; i < cart.products.length; i++) {
-            if (cart.products[i].product._id == productId && cart.products[i].quantity >= quantity) {
-                cart.products[i].quantity = cart.products[i].quantity - (+quantity);
-                cart.totalPrice = cart.totalPrice - (+cart.products[i].product.price * (+quantity))
+            if (cart.products[i].product._id == productId) {
+                cart.products[i].quantity = cart.products[i].quantity - 1;
+                cart.totalPrice = cart.totalPrice - (+cart.products[i].product.price)
                 if (cart.products[i].quantity == 0) {
                     cart.products.splice(i, 1)
                 }
