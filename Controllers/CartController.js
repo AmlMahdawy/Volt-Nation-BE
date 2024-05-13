@@ -17,39 +17,40 @@ const GetCart = async (req, res) => {
 }
 const AddToCart = async (req, res) => {
     let { productId } = req.params;
-    let userId = await UserController.DecodeToken(req, res)
-    if (userId) {
-        let cart = await CartModel.findOne({ userID: userId })
-        let product = await ProductModel.findOne({ _id: productId })
+    try {
 
-        let foundProduct = cart.products.find((obj) => {
-            return obj.product._id == productId
-        })
-        if (foundProduct) {
-
-            for (let i = 0; i < cart.products.length; i++) {
-                if (cart.products[i].product._id == productId) {
-                    cart.products[i].quantity = cart.products[i].quantity + 1;
-                    cart.totalPrice = cart.totalPrice + (+product.price)
-                    cart.markModified('products');
+        let userId = await UserController.DecodeToken(req, res)
+        if (userId) {
+            let cart = await CartModel.findOne({ userID: userId })
+            let product = await ProductModel.findOne({ _id: productId })
+            if (product) {
+                let foundProduct = cart.products.find((obj) => {
+                    return obj.product._id == productId
+                })
+                if (foundProduct) {
+                    for (let i = 0; i < cart.products.length; i++) {
+                        if (cart.products[i].product._id == productId) {
+                            cart.products[i].quantity = cart.products[i].quantity + 1;
+                            cart.totalPrice = cart.totalPrice + (+product.price)
+                            cart.markModified('products');
+                        }
+                    }
+                    await cart.save();
+                    res.send(cart);
                 }
+                else {
+                    cart.products.push({ product, quantity: 1 })
+                    cart.totalPrice = (cart.totalPrice + (+product.price))
+                    await cart.save()
+                    res.send(cart)
+                }
+            } else {
+                console.log('Product not found')
             }
-            await cart.save();
-
-            res.send(cart);
-
-        } else {
-            cart.products.push({ product, quantity: 1 })
-            cart.totalPrice = (cart.totalPrice + (+product.price))
-            await cart.save()
-
-
-            res.send(cart)
-
         }
+    } catch (e) {
+        console.log("error", e)
     }
-
-
 }
 
 

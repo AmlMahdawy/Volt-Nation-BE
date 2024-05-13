@@ -12,21 +12,38 @@ const GetStatistics = async (req, res) => {
     res.send({ "sales": sales, "users": users.length, "orders": orders.length })
 }
 
+
+//////////////
+// ORDERS
+/////////////
 const GetOrders = async (req, res) => {
     let orders = await OrderModel.find({}, {
         totalPrice: 1, userID: 1, status: 1, date: 1
     })
-    let modified = orders
-    for (let i = 0; i < modified.length; i++) {
-        let user = await UserModel.findOne({ _id: modified[i].userID })
-        modified[i].userName = user.name
+    let modified = []
+    // console.log(modified)
+
+    for (let i = 0; i < orders.length; i++) {
+        let user = await UserModel.findOne({ _id: orders[i].userID }, { name: 1, _id: 0 })
+        orders[i] = { ...orders[i], userName: user.name }
+        modified.push(orders[i])
     }
     res.send(modified)
 
 }
+const DeleteOrder = async (req, res) => {
+    let { orderId } = req.params
+    let deleted = await OrderModel.findOneAndDelete({ _id: orderId })
+    if (deleted) {
+        res.status(200).send({ message: "order deleted" })
+    } else {
+        res.status(404).send({ message: "order not found" })
 
+    }
+}
 
 module.exports = {
     GetStatistics,
-    GetOrders
+    GetOrders,
+    DeleteOrder
 }
