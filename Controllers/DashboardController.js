@@ -20,16 +20,7 @@ const GetOrders = async (req, res) => {
     let orders = await OrderModel.find({}, {
         totalPrice: 1, userID: 1, status: 1, date: 1
     })
-    let modified = []
-    // console.log(modified)
-
-    for (let i = 0; i < orders.length; i++) {
-        let user = await UserModel.findOne({ _id: orders[i].userID }, { name: 1, _id: 0 })
-        orders[i] = { ...orders[i], userName: user.name }
-        modified.push(orders[i])
-    }
-    res.send(modified)
-
+    res.send(orders)
 }
 const DeleteOrder = async (req, res) => {
     let { orderId } = req.params
@@ -40,6 +31,10 @@ const DeleteOrder = async (req, res) => {
         res.status(404).send({ message: "order not found" })
 
     }
+}
+
+const UpdateOrderStatus = async (req, res) => {
+
 }
 
 module.exports = {

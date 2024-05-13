@@ -49,26 +49,31 @@ let Register = async (req, res, next) => {
     let foundUser = await duplicateUserCheck(Data.email);
     if (foundUser) return res.status(401).send({ res: false, message: "email already registered" });
 
-    var salt = await bcrypt.genSalt(10);
-    var hashedPassword = await bcrypt.hash(Data.password, salt);
+
 
     Data.email = Data.email.toLowerCase();
-    Data.password = hashedPassword;
     Data.name = Data.firstName + " " + Data.lastName;
 
+    if (!Data.gmail) {
+        var salt = await bcrypt.genSalt(10);
+        var hashedPassword = await bcrypt.hash(Data.password, salt);
+        Data.password = hashedPassword;
+    } else {
+        const randomNumber = Number.toString(Math.floor(Math.random() * 90000000) + 10000000);
+        var salt = await bcrypt.genSalt(10);
+        var hashedPassword = await bcrypt.hash(randomNumber, salt);
+        Data.password = hashedPassword;
+    }
     var newUser = new UserModel(Data);
     let userCart = new CartModel({ userID: newUser._id, totalPrice: 0 })
     await userCart.save()
-
     await newUser.save()
-        .then()
-        .catch((err) => { res.json({ message: err }) });
     res.status(201).send({ res: true });
 };
 
 
 let Login = async (req, res) => {
-    console.log(req.body)
+
     var body = req.body;
     if (!body.gmail) {
         body.email = body.email.toLowerCase();
