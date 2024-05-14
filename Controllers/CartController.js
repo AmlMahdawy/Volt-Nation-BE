@@ -1,6 +1,4 @@
-const UserModel = require("../Models/UserModel")
 const OrderModel = require("../Models/OrderModel")
-
 const ProductModel = require("../Models/ProductModel");
 const CartModel = require("../Models/CartModel")
 const UserController = require("../Controllers/UserController");

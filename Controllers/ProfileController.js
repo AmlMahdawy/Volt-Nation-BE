@@ -115,22 +115,7 @@ const DeleteAddress = async (req, res) => {
 
 }
 
-//ORDERS
-const getUserOrders = async (req, res) => {
-    let userId = await UserController.DecodeToken(req, res);
-    if (userId) {
-        let orders = await OrderModel.find({ userID: userId })
-        res.send(orders)
-    }
 
-}
-const CancelOrder = async (req, res) => {
-    let userId = await UserController.DecodeToken(req, res);
-    if (userId) {
-        let orders = await OrderModel.findOneAndUpdate({ _id: req.params.orderId }, { status: "cancelled" })
-        res.status(200).send()
-    }
-}
 
 //WISHLIST
 const AddToWishlist = async (req, res) => {
@@ -184,9 +169,7 @@ module.exports = {
     GetAllAdrresses,
     EditAddress,
     DeleteAddress,
-    getUserOrders,
     AddToWishlist,
     RemoveFromWishlist,
-    CancelOrder,
     AddToviewed
 }
