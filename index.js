@@ -17,12 +17,16 @@ const ProductRoutes = require("./Routes/ProductRoutes");
 const UserRoutes = require("./Routes/UserRoutes");
 const CartRoutes = require("./Routes/CartRoutes");
 const DashboardRoutes = require("./Routes/DashboardRoutes");
+const OrdersRoutes = require("./Routes/OrdersRoutes");
+const CategoryRoutes = require("./Routes/CategoryRoutes");
 
 
 app.use("/products", ProductRoutes);
 app.use("/user", UserRoutes);
 app.use("/cart", CartRoutes);
 app.use("/dashboard", DashboardRoutes);
+app.use("/orders", OrdersRoutes);
+app.use("/category", CategoryRoutes);
 
 
 

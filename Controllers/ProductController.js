@@ -5,7 +5,13 @@ let GetAllProducts = async (req, res, next) => {
   res.status(200).send(Products);
 };
 
+const UpdateProduct = async (req, res) => { }
+const DeleteProduct = async (req, res) => { }
+const AddProduct = async (req, res) => { }
 
 module.exports = {
-  GetAllProducts
+  GetAllProducts,
+  UpdateProduct,
+  DeleteProduct,
+  AddProduct
 };
