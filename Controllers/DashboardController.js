@@ -7,7 +7,7 @@ const GetStatistics = async (req, res) => {
     let totalSales = await OrderModel.find({ totalPrice: { $gt: 0 } }, { totalPrice: 1, _id: 0 })
     let productsNum = await ProductModel.find({})
     let users = await UserModel.find({}, { _id: 1 })
-    let orders = await OrderModel.find({})
+    let orders = await OrderModel.find({}, { date: 1, totalPrice: 1 })
 
     let sales = 0;
     totalSales.forEach((obj) => {
