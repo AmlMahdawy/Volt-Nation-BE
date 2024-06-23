@@ -12,6 +12,7 @@ mongoose.connect("mongodb+srv://voltnation44:IhD9lsUXr91Cg0qq@cluster0.fauifky.m
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
+app.use(express.static('public'));
 
 const ProductRoutes = require("./Routes/ProductRoutes");
 const UserRoutes = require("./Routes/UserRoutes");
