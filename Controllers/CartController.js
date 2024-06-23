@@ -98,10 +98,14 @@ const CheckOut = async (req, res) => {
     let addressId = req.body.addressId
     let userId = await UserController.DecodeToken(req, res)
     if (userId) {
+
         let user = await UserController.GetUserById(userId)
         let cart = await CartModel.findOne({ userID: userId })
         let { products, totalPrice, userID } = cart
-        let order = new OrderModel({ products, totalPrice, userID, date: new Date().toUTCString(), address: addressId });
+
+        const currentDate = new Date();
+        currentDate.setMonth(currentDate.getMonth() - 5);
+        let order = new OrderModel({ products, totalPrice, userID, date: currentDate.toUTCString(), address: addressId });
         await order.save()
         for (let i = 0; i < cart.products.length; i++) {
             //add to purchased 
