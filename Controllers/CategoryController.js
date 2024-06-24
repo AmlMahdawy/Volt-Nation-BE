@@ -3,23 +3,24 @@ const ProductModel = require("../Models/ProductModel");
 
 const CreateCategory = async (req, res) => {
     try {
-        let { name, description } = req.body
-        var files = req.files;
-        let imgs = []
-        if (files) {
-            files.forEach(fileObj => {
-                imgs.push(fileObj.filename)
-            });
-        }
-
-        let category = new CategoryModel({ name: name.trim(), imgs, description, date: new Date().toUTCString() });
+        let { name, description, imgs } = req.body
+        // var files = req.files;
+        // let imgs = []
+        // if (files) {
+        //     files.forEach(fileObj => {
+        //         imgs.push(fileObj.filename)
+        //     });
+        // }
+        let productsNum = await ProductModel.find({ category: name })
+        let category = new CategoryModel({ name: name.trim(), imgs, description, date: new Date().toUTCString(), productsNum: productsNum.length });
         await category.save()
         res.status(200).send(category)
     } catch (err) {
-        res.send({ err })
+        res.send({ "err": err.message })
     }
 }
 const UpdateCategory = async (req, res) => {
+
     let { name, description } = req.body
     let { catId } = req.params
 
@@ -40,8 +41,14 @@ const UpdateCategory = async (req, res) => {
 const DeleteCategory = async (req, res) => {
     let { catId } = req.params
     let category = await CategoryModel.findOne({ _id: catId }, { name: 1 })
-    await ProductModel.deleteMany({ category: category.name })
-    let deleted = await CategoryModel.findOneAndDelete()
+    if (category) {
+        await ProductModel.deleteMany({ category: category.name })
+        let deleted = await CategoryModel.findOneAndDelete({ _id: catId })
+        res.send(deleted)
+    } else {
+        res.send("category not found")
+    }
+
 }
 const AllCategories = async (req, res) => {
     let cats = await CategoryModel.find({})
