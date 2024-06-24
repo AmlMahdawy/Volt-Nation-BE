@@ -13,6 +13,7 @@ const ProductSchema = new mongoose.Schema({
   salesNum: { type: Number },
   quantity: { type: Number },
   id: { type: String },
+  rate: { type: String, default: "4" }
 });
 
 module.exports = mongoose.model("Products", ProductSchema);

@@ -6,9 +6,12 @@ const CreateCategory = async (req, res) => {
         let { name, description } = req.body
         var files = req.files;
         let imgs = []
-        files.forEach(fileObj => {
-            imgs.push(fileObj.filename)
-        });
+        if (files) {
+            files.forEach(fileObj => {
+                imgs.push(fileObj.filename)
+            });
+        }
+
         let category = new CategoryModel({ name: name.trim(), imgs, description, date: new Date().toUTCString() });
         await category.save()
         res.status(200).send(category)
@@ -22,9 +25,12 @@ const UpdateCategory = async (req, res) => {
 
     var files = req.files;
     let imgs = []
-    files.forEach(fileObj => {
-        imgs.push(fileObj.filename)
-    });
+    if (files) {
+        files.forEach(fileObj => {
+            imgs.push(fileObj.filename)
+        });
+    }
+
 
     let category = await CategoryModel.findOneAndUpdate({ _id: catId }, { name: name.trim(), imgs, description })
     await category.save()
@@ -36,7 +42,6 @@ const DeleteCategory = async (req, res) => {
     let category = await CategoryModel.findOne({ _id: catId }, { name: 1 })
     await ProductModel.deleteMany({ category: category.name })
     let deleted = await CategoryModel.findOneAndDelete()
-
 }
 const AllCategories = async (req, res) => {
     let cats = await CategoryModel.find({})
