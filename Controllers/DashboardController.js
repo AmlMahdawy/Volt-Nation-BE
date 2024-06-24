@@ -19,7 +19,7 @@ const GetStatistics = async (req, res) => {
                     year: { $year: "$date" },
                     month: { $month: "$date" }
                 },
-                sales: { $sum: "$totalPrice" }
+                totalMonthlyPrice: { $sum: "$totalPrice" }
             }
         },
         {
