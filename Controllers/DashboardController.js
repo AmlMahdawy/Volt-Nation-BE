@@ -10,20 +10,7 @@ const GetStatistics = async (req, res) => {
     let orders = await OrderModel.find({}, { date: 1, totalPrice: 1 })
 
 
-    const monthMap = {
-        1: "Jan",
-        2: "Feb",
-        3: "Mar",
-        4: "Apr",
-        5: "May",
-        6: "Jun",
-        7: "Jul",
-        8: "Aug",
-        9: "Sep",
-        10: "Oct",
-        11: "Nov",
-        12: "Dec"
-    };
+    const monthMap = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const result = await OrderModel.aggregate([
         {
@@ -32,21 +19,22 @@ const GetStatistics = async (req, res) => {
                     year: { $year: "$date" },
                     month: { $month: "$date" }
                 },
-                totalMonthlyPrice: { $sum: "$totalPrice" }
+                sales: { $sum: "$totalPrice" }
             }
         },
         {
             $project: {
                 _id: 0,
                 year: "$_id.year",
-                month: { $arrayElemAt: [Object.values(monthMap), { $subtract: ["$_id.month", 1] }] },
+                month: { $arrayElemAt: [monthMap, { $subtract: ["$_id.month", 1] }] },
                 totalMonthlyPrice: 1
             }
         },
         {
-            $sort: { year: 1, month: 1 } // Sort by year and month in ascending order
+            $sort: { year: 1, "_id.month": 1 } // Sort by year and month in ascending order
         }
     ]);
+
 
     let sales = 0;
     totalSales.forEach((obj) => {
