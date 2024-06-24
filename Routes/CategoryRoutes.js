@@ -15,7 +15,7 @@ const upload = multer({ storage })
 
 router.get("/all", CategoryController.AllCategories);
 router.post("/add", upload.array('imgs', 5), CategoryController.CreateCategory);
-router.patch("/update/:catId", CategoryController.UpdateCategory);
+router.patch("/update/:catId", upload.array('imgs', 5), CategoryController.UpdateCategory);
 router.delete("/delete/:catId", CategoryController.DeleteCategory);
 
 
