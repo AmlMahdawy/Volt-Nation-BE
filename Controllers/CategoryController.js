@@ -18,19 +18,18 @@ const CreateCategory = async (req, res) => {
 }
 const UpdateCategory = async (req, res) => {
     let { name, description } = req.body
-    let { catId } = req.param
-    try {
-        var files = req.files;
-        let imgs = []
-        files.forEach(fileObj => {
-            imgs.push(fileObj.filename)
-        });
-        let category = await CategoryModel.findOneAndUpdate({ _id: catId }, { name: name.trim(), imgs, description })
-        await category.save()
-        res.status(200).send(category)
-    } catch (err) {
-        res.send({ err })
-    }
+    let { catId } = req.params
+
+    var files = req.files;
+    let imgs = []
+    files.forEach(fileObj => {
+        imgs.push(fileObj.filename)
+    });
+
+    let category = await CategoryModel.findOneAndUpdate({ _id: catId }, { name: name.trim(), imgs, description })
+    await category.save()
+    res.status(200).send(category)
+
 }
 const DeleteCategory = async (req, res) => {
     let { catId } = req.params
