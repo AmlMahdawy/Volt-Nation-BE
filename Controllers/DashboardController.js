@@ -31,10 +31,9 @@ const GetStatistics = async (req, res) => {
             }
         },
         {
-            $sort: { year: 1, "_id.month": 1 } // Sort by year and month in ascending order
+            $sort: { year: -1, "_id.month": -1 }
         }
     ]);
-
 
     let sales = 0;
     totalSales.forEach((obj) => {
