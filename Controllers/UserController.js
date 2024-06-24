@@ -81,7 +81,7 @@ let Login = async (req, res) => {
         if (!foundUser) return res.status(403).send({ message: "Invalid E-mail" })
         var passwordValid = await bcrypt.compare(body.password, foundUser.password);
         if (!passwordValid) return res.status(403).send({ message: "Invalid Password" });
-        var token = jwt.sign({ id: foundUser._id, isAdmin: foundUser.role }, "volt", { expiresIn: "24h" });
+        var token = jwt.sign({ email: foundUser.email, id: foundUser._id, isAdmin: foundUser.role }, "volt", { expiresIn: "24h" });
         res.header("x-auth-token", token);
         res.status(200).send({ token: token });
     } else {
