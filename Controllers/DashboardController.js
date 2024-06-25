@@ -41,20 +41,40 @@ const GetStatistics = async (req, res) => {
     })
     res.send({ "sales": sales, "users": users.length, "orders": orders.length, "products": productsNum.length, "recentOrder": orders.slice(0, 20), result })
 }
-const setAdmin = async (req, res) => {
+
+const alterRole = async (req, res) => {
     try {
         let { id } = req.params
-        await UserModel.findByIdAndUpdate({ _id: id }, { role: "admin" })
+        let user = await UserModel.findOne({ _id: id }, { role: 1 })
+        if (user.role == "admin") {
+            console.log("lol")
+            user.role = "user"
+        } else {
+            user.role = "admin"
+
+        }
+        console.log(user.role)
+        user.markModified("role")
+        await user.save()
         res.status(200).send()
     } catch (err) {
-        res.send
+        res.send({ "err": err.message })
     }
 
 }
 
+const removeUser = async (req, res) => {
+    try {
+        let { id } = req.params
+        await UserModel.findOneAndDelete({ _id: id })
+        res.status(200).send()
+    } catch (err) {
+        res.send({ "err": err.message })
+    }
+
+}
 module.exports = {
     GetStatistics,
-    setAdmin,
-    // removeAdmin,
-    // removeUser
+    alterRole,
+    removeUser
 }
