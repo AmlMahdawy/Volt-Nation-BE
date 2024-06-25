@@ -8,14 +8,16 @@ let GetAllProducts = async (req, res, next) => {
 };
 
 const UpdateProduct = async (req, res) => {
-  let { name,
+  let {
+    name,
     description,
     category,
     features,
     price,
     colors,
     factoryName,
-    quantity
+    quantity,
+    brand
   } = req.body
   let { productId } = req.params
   var files = req.files;
@@ -38,7 +40,8 @@ const UpdateProduct = async (req, res) => {
     colors,
     factoryName,
     quantity,
-    category
+    category,
+    brand
   }, { new: true });
 
 
