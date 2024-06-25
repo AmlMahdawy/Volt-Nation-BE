@@ -44,7 +44,7 @@ const UpdateOrderStatus = async (req, res) => {
     let { orderId, status } = req.params
     let order;
     if (status == "cancelled") {
-        await OrderModel.findOneAndDelete({ _id: orderId })
+        order = await OrderModel.findOneAndDelete({ _id: orderId })
     } else {
         order = await OrderModel.findOneAndUpdate({ _id: orderId }, { status: status })
 
