@@ -3,14 +3,14 @@ const ProductModel = require("../Models/ProductModel");
 
 const CreateCategory = async (req, res) => {
     try {
-        let { name, description, imgs } = req.body
-        // var files = req.files;
-        // let imgs = []
-        // if (files) {
-        //     files.forEach(fileObj => {
-        //         imgs.push(fileObj.filename)
-        //     });
-        // }
+        let { name, description } = req.body
+        var files = req.files;
+        let imgs = []
+        if (files) {
+            files.forEach(fileObj => {
+                imgs.push(fileObj.filename)
+            });
+        }
         let productsNum = await ProductModel.find({ category: name })
         let category = new CategoryModel({ name: name.trim(), imgs, description, date: new Date().toUTCString(), productsNum: productsNum.length });
         await category.save()
@@ -32,10 +32,19 @@ const UpdateCategory = async (req, res) => {
         });
     }
 
+    let cat = await CategoryModel.findOne({ _id: catId })
+    if (cat.name === name) {
+        console.log(name, cat.name)
+        let category = await CategoryModel.findOneAndUpdate({ _id: catId }, { name: name.trim(), imgs, description })
+        await category.save()
+        res.status(200).send(category)
 
-    let category = await CategoryModel.findOneAndUpdate({ _id: catId }, { name: name.trim(), imgs, description })
-    await category.save()
-    res.status(200).send(category)
+    } else {
+        await ProductModel.updateMany({ category: cat.name }, { category: name })
+        let category = await CategoryModel.findOneAndUpdate({ _id: catId }, { name: name.trim(), imgs, description })
+        await category.save()
+        res.status(200).send(category)
+    }
 
 }
 const DeleteCategory = async (req, res) => {
