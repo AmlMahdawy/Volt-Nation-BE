@@ -42,7 +42,13 @@ const GetOrders = async (req, res) => {
 
 const UpdateOrderStatus = async (req, res) => {
     let { orderId, status } = req.params
-    let order = await OrderModel.findOneAndUpdate({ _id: orderId }, { status: status })
+    let order;
+    if (status == "cancelled") {
+        await OrderModel.findOneAndDelete({ _id: orderId })
+    } else {
+        order = await OrderModel.findOneAndUpdate({ _id: orderId }, { status: status })
+
+    }
     if (order) {
         res.status(200).send({ res: "status updated" })
 
