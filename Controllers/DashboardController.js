@@ -77,8 +77,15 @@ const removeUser = async (req, res) => {
     }
 
 }
+const getAllUsers = async (req, res) => {
+
+    let users = await UserModel.find({}, { name: 1 })
+
+    res.send(users)
+}
 module.exports = {
     GetStatistics,
     alterRole,
-    removeUser
+    removeUser,
+    getAllUsers
 }
