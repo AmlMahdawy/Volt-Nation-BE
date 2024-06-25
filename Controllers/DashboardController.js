@@ -41,8 +41,20 @@ const GetStatistics = async (req, res) => {
     })
     res.send({ "sales": sales, "users": users.length, "orders": orders.length, "products": productsNum.length, "recentOrder": orders.slice(0, 20), result })
 }
+const setAdmin = async (req, res) => {
+    try {
+        let { id } = req.params
+        await UserModel.findByIdAndUpdate({ _id: id }, { role: "admin" })
+        res.status(200).send()
+    } catch (err) {
+        res.send
+    }
+
+}
 
 module.exports = {
     GetStatistics,
-
+    setAdmin,
+    // removeAdmin,
+    // removeUser
 }

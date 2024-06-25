@@ -73,7 +73,8 @@ const AddProduct = async (req, res) => {
     price,
     colors,
     factoryName,
-    quantity
+    quantity,
+    brand
 
   } = req.body
 
@@ -97,7 +98,8 @@ const AddProduct = async (req, res) => {
     colors,
     factoryName,
     quantity,
-    category
+    category,
+    brand
   });
   await product.save()
   await CategoryModel.findOneAndUpdate({ name: category }, { $inc: { productsNum: 1 } }, { new: true })
