@@ -129,19 +129,46 @@ const AddToWishlist = async (req, res) => {
     }
 
 }
+
 const RemoveFromWishlist = async (req, res) => {
     let userId = await UserController.DecodeToken(req, res);
     if (userId) {
         let user = await UserController.GetUserById(userId);
-        user.favourite.find((product, index) => {
-            if (product._id == req.params.productId) {
-                user.favourite.splice(index, 1)
+
+        if (user && user.favourite) {
+            const originalLength = user.favourite.length;
+
+            // Filter out the product to remove it
+            user.favourite = user.favourite.filter(
+                (product) => product._id != req.params.productId
+            );
+
+            if (user.favourite.length === originalLength) {
+                return res.status(404).send("Product not found in favourites");
             }
-        })
-        await user.save()
-        res.send(user.favourite)
+
+            await user.save();
+            return res.send(user.favourite);
+        } else {
+            return res.status(404).send("User or favourite list not found");
+        }
+    } else {
+        return res.status(401).send("Unauthorized");
     }
-}
+};
+// const RemoveFromWishlist = async (req, res) => {
+//     let userId = await UserController.DecodeToken(req, res);
+//     if (userId) {
+//         let user = await UserController.GetUserById(userId);
+//         user.favourite.find((product, index) => {
+//             if (product._id == req.params.productId) {
+//                 user.favourite.splice(index, 1)
+//             }
+//         })
+//         await user.save()
+//         res.send(user.favourite)
+//     }
+// }
 //RecentlyViewed
 const AddToviewed = async (req, res) => {
     let product = await ProductModel.findOne({ _id: req.params.productId })
