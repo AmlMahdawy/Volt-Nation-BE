@@ -79,7 +79,7 @@ const removeUser = async (req, res) => {
 }
 const getAllUsers = async (req, res) => {
 
-    let users = await UserModel.find({}, { name: 1 })
+    let users = await UserModel.find({}, { name: 1, role: 1 })
 
     res.send(users)
 }
