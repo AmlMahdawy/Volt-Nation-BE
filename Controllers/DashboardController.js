@@ -1,3 +1,4 @@
+const CartModel = require("../Models/CartModel")
 const OrderModel = require("../Models/OrderModel")
 const ProductModel = require("../Models/ProductModel")
 const UserModel = require("../Models/UserModel")
@@ -67,6 +68,9 @@ const removeUser = async (req, res) => {
     try {
         let { id } = req.params
         await UserModel.findOneAndDelete({ _id: id })
+        await CartModel.findOneAndDelete({ userID: id })
+        await OrderModel.findOneAndDelete({ userID: id })
+
         res.status(200).send()
     } catch (err) {
         res.send({ "err": err.message })
