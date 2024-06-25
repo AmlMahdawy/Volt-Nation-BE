@@ -104,7 +104,7 @@ const CheckOut = async (req, res) => {
         let { products, totalPrice, userID } = cart
 
         const currentDate = new Date();
-        currentDate.setMonth(currentDate.getMonth() - 5);
+        currentDate.setMonth(currentDate.getMonth());
         let order = new OrderModel({ products, totalPrice, userID, date: currentDate.toUTCString(), address: addressId });
         await order.save()
         for (let i = 0; i < cart.products.length; i++) {
